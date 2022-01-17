@@ -1,38 +1,42 @@
-from flask import send_from_directory, request
+from flask import request
 import os
 from os import system, getenv
 import ujson as json
-from json import dump
+from json import dump, load
 
-json_path = "./app/database/database.json"
-def show_users() -> None:
-    if not os.path.exists(json_path):
-        os.system("mkdir ./app/database")
-        new_file = {"data": []}
-        with open(json_path, 'w') as json_content:
-            dump(new_file, json_content, indent=4)
+LOCATION_JSON_DATA = getenv('LOCATION_JSON_DATA')
 
-    file_open = open(json_path)
-    result = file_open.read()
-    file_open.close()
-        
-## rota /user [GET]
-# Caso o arquivo database.json não exista, 
-# deverá fazer a criação do arquivo colocando uma lista vazia dentro dele 
-# e deverá retornar esta lista. O status da rota DEVE ser 200 OK.
-# { "data": [] }, 200
+def new_database_json() -> None:
+    os.system("mkdir ./app/database")
+    new_file = {"data": []}
+    with open(LOCATION_JSON_DATA, 'w') as json_content:
+        dump(new_file, json_content, indent=4)
 
-# Caso o arquivo database.json exista, mas esteja vazio, 
-# deverá fazer a inserção de uma lista vazia e retornar esta lista. 
-# O status da rota DEVE ser 200 OK.
+def read_database_json() -> str:
+    try:
+        with open(LOCATION_JSON_DATA, 'r') as json_file:
+            return load(json_file)
+    except:
+        return {"msg": "tratar erros aqui"}
 
-# Caso o arquivo database.json exista e estiver populado com dados, 
-# deverá retornar os dados contidos dentro dele. 
-# O status da rota DEVE ser 200 OK.
+def show_users() -> str:
+    if not os.path.exists(LOCATION_JSON_DATA):
+        new_database_json()
 
-    return result
+    if os.stat(LOCATION_JSON_DATA).st_size==0:
+        os.remove(LOCATION_JSON_DATA)
+        new_database_json()
+
+    return read_database_json(), 200
 
 def new_user():
+    parametros = request.get_json()
+    json_list = read_database_json()
+    json_list.append(parametros)
+    with open(LOCATION_JSON_DATA, 'w') as json_content:
+        dump(json_list, json_content, indent=4)
+
+
 ## rota /user [POST]
 # Ao fazer requisição nessa rota, 
 # deverá inserir os dados recebidos no seu database.json 
@@ -96,4 +100,4 @@ def new_user():
 #     ]
 # }
 # 
-    return {"teste": "Estamos em post"}
+    return read_database_json(), 201
