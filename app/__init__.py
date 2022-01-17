@@ -1,6 +1,4 @@
-from flask import Flask#, request , jsonify
-#from os import getenv
-
+from flask import Flask
 from app.services import show_users, new_user
 
 

@@ -1,3 +1,4 @@
+import email
 from flask import request
 import os
 from os import system, getenv
@@ -8,7 +9,7 @@ LOCATION_JSON_DATA = getenv('LOCATION_JSON_DATA')
 
 def new_database_json() -> None:
     os.system("mkdir ./app/database")
-    new_file = {"data": []}
+    new_file = []
     with open(LOCATION_JSON_DATA, 'w') as json_content:
         dump(new_file, json_content, indent=4)
 
@@ -27,77 +28,53 @@ def show_users() -> str:
         os.remove(LOCATION_JSON_DATA)
         new_database_json()
 
-    return read_database_json(), 200
+    return {"data": read_database_json()}, 200
+
+def valid_fields(name: str, email: str) -> bool:
+    if type(name) == str and type(email) == str:
+        return True
+    return False
+
+def valid_user_name(nome) -> str:
+    novo_nome = ""
+    for n in nome.split():
+        novo_nome += " " + n.capitalize()
+    return novo_nome.strip()
+
+def next_id() -> int:
+    database = read_database_json()
+    result = 0
+    for i in database:
+        if i["id"] > result:
+            result = i["id"]
+    return result + 1
+
+def email_exist(email: str) -> bool:
+    database = read_database_json()
+    for i in database:
+        if i["email"] == email:
+            return True
+    return False
+    
 
 def new_user():
+    if not os.path.exists(LOCATION_JSON_DATA):
+        new_database_json()
     parametros = request.get_json()
+
+    if not valid_fields(parametros["nome"], parametros["email"]):
+        return (
+            {"wrong fields": 
+            f"[{'nome': 'integer'}, {'email': 'dictionary'}]"}
+        ), 400
+    parametros["nome"] = valid_user_name(parametros["nome"])
+    parametros["email"] = parametros["email"].upper()
+    parametros["id"] = next_id()
+    
+    if email_exist(parametros["email"]):
+        return {"error": "User already exists."}, 409
     json_list = read_database_json()
     json_list.append(parametros)
     with open(LOCATION_JSON_DATA, 'w') as json_content:
         dump(json_list, json_content, indent=4)
-
-
-## rota /user [POST]
-# Ao fazer requisição nessa rota, 
-# deverá inserir os dados recebidos no seu database.json 
-# e retornar o status 201 CREATED.
-
-# O nome deve ter as primeiras letras maiúsculas 
-# e o email deve ser salvo com todas as letras minúsculas;
-
-# Fazer a criação dinâmica do id do usuário, 
-# sendo esse dado do tipo int;
-
-# Caso o arquivo database.json não exista, 
-# deverá fazer a criação do arquivo 
-# e salvar o dado recebido pela requisição.
-
-# Deverá verificar se o email já existe dentro do arquivo database.json, 
-# se já existir deverá retornar o status 409 CONFLICT.
-
-# Deverá verificar se os dados recebidos estão com o tipo correto, 
-# sendo o nome e email do tipo string, 
-# caso o valor dessas chaves seja de algum outro tipo, 
-# deverá retornar o status 400 BAD REQUEST.
-
-## REQUISIÇÃO
-# {
-#     "nome": "nome do usuário",
-#     "email": "EXEMPLO@MAIL.COM"
-# }
-
-## RETORNO
-# {
-#     "data": {
-#         "email": "exemplo@mail.com",
-#         "id": 1,
-#         "nome": "Nome Do Usuário"
-#     }
-# }
-# 
-
-## RETORNO USANDO UM EMAIL QUE JÁ EXISTE
-# STATUS 409 CONFLICT.
-# {
-#     "error": "User already exists."
-# }
-# 
-
-## RETORNO USANDO TIPO DE DADOS INCORRETOS
-# deve retornar o tipo de dado enviado e não o que se espera
-# EXEMPLO:
-# { "nome": 1, "email": {} }
-
-# STATUS 400 BAD REQUEST.
-# {
-#     "wrong fields": [
-#         {
-#             "nome": "integer"
-#         },
-#         {
-#             "email": "dictionary"
-#         }
-#     ]
-# }
-# 
-    return read_database_json(), 201
+    return {"data": read_database_json()}, 201

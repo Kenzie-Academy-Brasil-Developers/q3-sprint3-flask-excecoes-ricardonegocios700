@@ -1,4 +1,12 @@
-{
-    "nome": "nome do usu\u00e1rio",
-    "email": "EXEMPLO@MAIL.COM"
-}
+[
+    {
+        "email": "RICARDO5@EMAIL.COM",
+        "nome": "Ma",
+        "id": 1
+    },
+    {
+        "email": "RICARDO4@EMAIL.COM",
+        "nome": "Ma",
+        "id": 2
+    }
+]
