@@ -1,9 +1,9 @@
-import email
 from flask import request
 import os
 from os import system, getenv
 import ujson as json
 from json import dump, load
+from app.exc import ArquivoError
 
 LOCATION_JSON_DATA = getenv('LOCATION_JSON_DATA')
 
@@ -60,21 +60,22 @@ def email_exist(email: str) -> bool:
 def new_user():
     if not os.path.exists(LOCATION_JSON_DATA):
         new_database_json()
-    parametros = request.get_json()
+    raise ArquivoError("não existe o arquivo de banco de dados")
+        
+    # parametros = request.get_json()
+    # if not valid_fields(parametros["nome"], parametros["email"]):
+    #     return (
+    #         {"wrong fields": 
+    #         f"[{'nome': 'integer'}, {'email': 'dictionary'}]"}
+    #     ), 400
+    # parametros["nome"] = valid_user_name(parametros["nome"])
+    # parametros["email"] = parametros["email"].upper()
+    # parametros["id"] = next_id()
 
-    if not valid_fields(parametros["nome"], parametros["email"]):
-        return (
-            {"wrong fields": 
-            f"[{'nome': 'integer'}, {'email': 'dictionary'}]"}
-        ), 400
-    parametros["nome"] = valid_user_name(parametros["nome"])
-    parametros["email"] = parametros["email"].upper()
-    parametros["id"] = next_id()
-    
-    if email_exist(parametros["email"]):
-        return {"error": "User already exists."}, 409
-    json_list = read_database_json()
-    json_list.append(parametros)
-    with open(LOCATION_JSON_DATA, 'w') as json_content:
-        dump(json_list, json_content, indent=4)
-    return {"data": read_database_json()}, 201
+    # if email_exist(parametros["email"]):
+    #     return {"error": "User already exists."}, 409
+    # json_list = read_database_json()
+    # json_list.append(parametros)
+    # with open(LOCATION_JSON_DATA, 'w') as json_content:
+    #     dump(json_list, json_content, indent=4)
+    # return {"data": read_database_json()}, 201
