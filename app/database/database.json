@@ -1,0 +1,37 @@
+[
+    {
+        "email": "TESTE01@EMAIL.COM",
+        "nome": "Rodrigo Silva",
+        "id": 1
+    },
+    {
+        "email": "TESTE02@EMAIL.COM",
+        "nome": "Ricardo Silva",
+        "id": 2
+    },
+    {
+        "email": "TESTE03@EMAIL.COM",
+        "nome": "Ricardo Silva",
+        "id": 3
+    },
+    {
+        "email": "TESTE04@EMAIL.COM",
+        "nome": "Ricardo Silva",
+        "id": 4
+    },
+    {
+        "email": "teste05@email.com",
+        "nome": "Ricardo Silva",
+        "id": 5
+    },
+    {
+        "email": "teste06@email.com",
+        "nome": "J\u00e3o",
+        "id": 6
+    },
+    {
+        "email": "email@rmail.com.br",
+        "nome": "Ricardo",
+        "id": 7
+    }
+]
