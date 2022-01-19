@@ -1,5 +1,5 @@
 from flask import Flask
-from app.services import show_users, new_user
+from .services import show_users, new_user
 
 
 app = Flask(__name__)
