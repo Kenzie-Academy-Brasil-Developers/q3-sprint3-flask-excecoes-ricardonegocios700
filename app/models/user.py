@@ -45,7 +45,7 @@ class User:
         params = valid_params(params)
         if self.emails_exist(params['email']):
             #TODO verificar mensagem de email existente
-            return {"msg": "User already exists.", "cod": 409}
+            return {"error": "User already exists.", "cod": 409}
         params['id'] = self.next_id()
         result = {"msg": [{"id": params["id"], "nome": params['nome'], "email": params['email']}], "cod": 201}
         dbase_json = self.show_users()
