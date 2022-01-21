@@ -18,6 +18,6 @@ def add_user():
     try:
         result = user.save_user(params)
     except FieldTypeError as e:
-        return {"error": e.message}, e.code
+        return jsonify(e.message), e.code
 
-    return {"msg": result["msg"]}, result["cod"]
+    return {result["type"]: result["msg"]}, result["cod"]

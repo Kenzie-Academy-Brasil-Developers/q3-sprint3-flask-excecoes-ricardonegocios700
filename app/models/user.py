@@ -43,10 +43,9 @@ class User:
     def save_user(self, params):
         params = valid_params(params)
         if self.emails_exist(params['email']):
-            #TODO verificar mensagem de email existente
-            return {"msg": "User already exists.", "cod": 409}
+            return {"msg": "User already exists.", "cod": 409, "type": "error"}
         params['id'] = self.next_id()
-        result = {"msg": [{"id": params["id"], "nome": params['nome'], "email": params['email']}], "cod": 201}
+        result = {"msg": [{"id": params["id"], "nome": params['nome'], "email": params['email']}], "cod": 201, "type": "msg"}
         dbase_json = self.show_users()
         dbase_json.append(params)
         with open(DB_JSON, "w") as json_file:
