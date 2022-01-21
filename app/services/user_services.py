@@ -1,6 +1,5 @@
 import json
 import os
-from unicodedata import name
 from flask import request
 from os import getenv
 from json import dump

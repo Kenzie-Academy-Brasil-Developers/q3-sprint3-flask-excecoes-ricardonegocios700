@@ -1,9 +1,8 @@
 import os
 from os import getenv
 from json import load, dump
-from textwrap import indent
 
-from app.services.user_services import new_database_json, get_request_new, valid_params
+from app.services.user_services import new_database_json, valid_params
 
 DB_JSON = getenv("LOCATION_JSON_DATA")
 
@@ -45,7 +44,7 @@ class User:
         params = valid_params(params)
         if self.emails_exist(params['email']):
             #TODO verificar mensagem de email existente
-            return {"error": "User already exists.", "cod": 409}
+            return {"msg": "User already exists.", "cod": 409}
         params['id'] = self.next_id()
         result = {"msg": [{"id": params["id"], "nome": params['nome'], "email": params['email']}], "cod": 201}
         dbase_json = self.show_users()
